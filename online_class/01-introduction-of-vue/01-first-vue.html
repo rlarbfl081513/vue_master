@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <!-- 이 영역에서는 vue의 instance로 관리할거야라고 알려줘야함 -->
+  <div id="app">
+    <p>{{ message }}</p>
+    <!-- 사용자와의 상호작용 -->
+     <!-- 버튼이 클릭되면 1씩 증가한다 -->
+     <!-- 
+      1. v-on:click="count++"는 핸들러없이  직접 표현식으로 1씩 증가시키는 간단한 방식
+      2. 복잡한 작업이 필요하면 method 또는 setup안에 함수로 분리해서 사용 가능
+      -->
+    <!--
+    1번 방식  -->
+     <!-- <button
+      v-on:click="count++"
+     >
+      count is{{ count }}
+    </button> -->
+    
+    <!-- 
+    2번 방식  -->
+    <button
+      v-on:click="handleClick"
+     >
+      count is{{ count }}
+    </button>
+  </div>
+
+
+
+  <div id="app-2">
+    <h1>{{username}}</h1>
+  </div>
+
+  <!-- vue cdn -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script>
+    // const createApp = Vue.createApp
+    // 뷰가 가지고 있는 다양한 메서드와 property등을 여러개 가져와서 쓸 것이기때문 
+    // 객체 구조 분해 할당 문법
+    const {createApp, ref} = Vue
+    const app = createApp({
+      // setup 함수
+      // setup: function(){}
+      setup(){
+        // 상태 관리
+        const message = ref('hello, vue')
+        // 사용자와의 상호작용으로 변경되거나 관리해야하는 상태는 
+        // 반응성 객체를 사용해서 별도로 관리
+        // 뷰가 가지고 있는 ref를 사용해서 변수를 선언 
+        const count = ref(0)
+        // count.value = 5  // 카운트의 초기값 설정
+        count.value += 5
+        console.log(count)
+        console.log(count.value)
+
+        // 2번 방식
+        const handleClick = () =>{
+          // count.value +=1가 내부적으로는 아래처럼 움직이는 거임
+          // count.value = count.value + 1
+          count.value +=1
+          console.log(count.value)
+        }
+        // setup함수가 하는 일은 한개의 object를 return
+        return {
+          // message : message
+          message, // key value 이름 같으면 축약 가능
+          count,
+          handleClick
+        }
+      }
+    })
+    // 너는 아이디가 app인 영역을 관리해
+    app.mount('#app')
+
+
+    // Devtools는 보통 처음 마운트된 하나의 앱만 추적하기에 첫번째 앱만 크롬의 뷰에서 볼 수 있음 --> 가능하면 하나의 앱에서 모든 상태를 관리하도록 하기 
+    const app2 = createApp({
+      setup(){
+        const username = ref('alice')
+        return {
+          username
+        }
+      }
+      
+    })
+    app2.mount('#app-2')
+
+  </script>
+</body>
+</html>
