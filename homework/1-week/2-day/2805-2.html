@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .is-selected {
+      background-color: #ff9a9a;
+    }
+
+    .is-required {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h1>다양한 전시 정보</h1>
+    <hr>
+    <ul>
+      <li :class="{ 'is-selected': isSelected }" :id="info.entitle">
+
+        <label for="selected">전시 선택</label>
+        <!-- 체크박스가 가진 속성을 이용해 체크되면 true인거임 -->
+        <input type="checkbox" name="selected" id="selected" v-model="isSelected">
+
+        <h3>{{ info.kotitle }}</h3>
+        <p v-html="info.description"></p>
+        <hr>
+        <p>{{ info.artMuseum }}</p>
+        <a :href="info.museumURL">전시장 바로가기</a>
+        <hr>
+        <p>입장권 구매하기</p>
+        <div>
+          <span :class="{ 'is-required': info.number <= 0 }">인원 수 : {{ info.number }} 명 </span>
+          <button @click="decreaseNum" :disabled="info.number <= 0">-</button>
+          <button @click="increaseNum" :disabled="info.number >= 10">+</button>
+        </div>
+        <p>총 입장료 : {{ pricetotal }} 원</p>
+        <hr>
+      </li>
+    </ul>
+  </div>
+
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script>
+    const { createApp, ref } = Vue
+
+    const app = createApp({
+      setup() {
+        const info = ref({
+          kotitle: '모네인사이드',
+          entitle: 'mone-inside',
+          artMuseum: '예술의전당',
+          museumURL: 'http',
+          description: '<p>모네 뭐시기 블라블라</p>',
+          isSelected: false,
+          price: 1000,
+          number: 0
+        })
+
+        const isSelected = ref(false)
+        const pricetotal = ref(0)
+
+        const decreaseNum = () => {
+          if (info.value.number > 0) {
+            info.value.number--
+            pricetotal.value = info.value.number * info.value.price
+          }
+        }
+
+        const increaseNum = () => {
+          if (info.value.number < 10) {
+            info.value.number++
+            pricetotal.value = info.value.number * info.value.price
+          }
+        }
+
+        return {
+          info,
+          pricetotal,
+          decreaseNum,
+          increaseNum,
+          isSelected
+        }
+      }
+    })
+
+    app.mount('#app')
+  </script>
+</body>
+</html>

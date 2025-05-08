@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="app">
+    <h1>설문조사</h1>
+
+    <form @submit.prevent="submitForm">
+      <div>
+        <label for="name">이름: </label>
+        <input id="name" type="text" v-model="formData.name">
+      </div>
+
+      <div>
+        <label for="email">이메일: </label>
+        <input id="email" type="email" v-model="formData.email">
+      </div>
+
+      <div>
+        <label for="age">나이: </label>
+        <input id="age" type="number"  v-model="formData.age">
+      </div>
+
+      <div>
+        <label for="residence">거주지: </label>
+        <select id="residence" v-model="formData.residence" required>
+          <!-- 
+          1. value는 선택됐을떄 select요소에 바인딩될 값 
+          2. 빈 문자열은 아직 아무것도 택하지 않은 상태를 말함
+          3. v-model="formData.residence"에 아무것도 택하지 않으면 이 옵션이 선택된 상태에서는 formData.residence===""이 된다
+          -->
+          <!-- 
+            disabled은 빈값을 다시 선택하지 못하게 하는거임, 즉 빈값을 제출하는 실수가 없도록하는 장치
+            - 뷰에서 v-model값과 option.value가 같으면 자동으로 선택처리를 한다.
+            - 즉 아래코드에서 value=""이고 스크립트 부분에서도 residence=""로 빈값으로서 일치되는게 '거주지를 택하라'니까 이게 가장 먼저 보이게 되는거임
+            - 그런데 위에서 말했다시피 일치하는 값을 먼저 보이게 하는데 뷰가 알아서 해주는 거니까 여기서 selected라는 코드는 사실 필요없음 
+          -->
+          <option value="" disabled selected>거주지를 선택하시오.</option>
+          <option>서울</option>
+          <option>경기</option>
+          <option>충청</option>
+          <option>전라</option>
+          <option>경상</option>
+        </select>
+      </div>
+
+      <div>
+        <label>사용하는 언어: </label>
+        <div>
+          <input type="checkbox" id="python" value="Python" v-model="formData.languages">
+          <label for="python">Python</label>
+        </div>
+        <div>
+          <input type="checkbox" id="javascript" value="JavaScript" v-model="formData.languages">
+          <label for="javascript">JavaScript</label>
+        </div>
+        <div>
+          <input type="checkbox" id="csharp" value="C#" v-model="formData.languages">
+          <label for="csharp">C#</label>
+        </div>
+        <div>
+          <input type="checkbox" id="ruby" value="Ruby" v-model="formData.languages">
+          <label for="ruby">Ruby</label>
+        </div>
+      </div>
+      <input type="submit" value="제출">
+    </form>
+  </div>
+
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script>
+    const { createApp, ref } = Vue
+
+    const app = createApp({
+      setup() {
+        // 반응형 변수 formdata는 속성 5개를 가진 객체
+        // 안에 각 속성의 이름 나열, v-model을 통해 각 인풋값과 양방향 바인딩된다
+        const formData = ref(
+          {
+            name : '',
+            email : '',
+            age : null,
+            residence : '',
+            languages : [],
+          }
+        )
+
+        // 함수 submitForm은 html form에서 submit 이벤트가 발생하면 호출됨
+        // 반응형 변수 formdata 객체의 각 속성 값을 콘솔로 출력
+        // submitForm은 setup()에서 반환된 객체의 메서드이다.
+        const submitForm = function(){
+          console.log(formData.value.name)
+          console.log(formData.value.email)
+          console.log(formData.value.age)
+          console.log(formData.value.residence)
+          console.log(formData.value.languages.join(', '))
+        }
+        return {formData,submitForm}
+      }
+    })
+
+    app.mount('#app')
+  </script>
+</body>
+
+</html>
