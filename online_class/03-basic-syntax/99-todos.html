@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+
+  <div id="app">
+    <select v-model="isSelected" name="" id="">
+      <option value="all">전체</option>
+      <option value="completed">완료됨</option>
+      <option value="in-progress">작업중</option>
+    </select>
+
+    <input v-model="newTodo" type="text" name="" id="">
+    <!-- 
+      <button :disabled="!newTodo">+</button> 이거는 입력값이 없으면 (newtodo가 falsy면) 버튼을 비활성화하겠다는것
+    -->
+      <!-- 
+        - !newTodo → null, undefined, '' (완전 빈 값) 막기
+        - newTodo.trim() === '' → " "처럼 공백만 있는 값도 막기
+      -->
+    <button @click="addTodo" :disabled="!newTodo || newTodo.trim() === ''">+</button>
+    <p>{{newTodo}}</p>
+    <ul>
+      <!-- 템플릿 태그는 렌더링되지 않는다. 그래서 화면 개발자 창에서도 볼 수 없음 -->
+      <template v-for="(item,index) in filterdTodos" :key="item.id">
+        <li>{{index}} - {{item.text}}</li>
+        <button @click="deleteTodo(item)">delete</button>
+      </template>
+    </ul>
+  </div>
+
+
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script>
+const {createApp,ref,computed} = Vue
+const app = createApp({
+  setup(){
+    let  id = 0
+    const isSelected = ref('all')
+    const newTodo = ref(null)
+    const todos = ref([
+      {id:id++, text:'sdfds', isCompleted:true},
+      {id:id++, text:'dd', isCompleted:true},
+      {id:id++, text:'ffff', isCompleted:false},
+    ])
+
+    const filterdTodos = computed(() => {
+        if (isSelected.value === 'completed'){
+          return todos.value.filter(todo => todo.isCompleted)
+        } else if (isSelected.value === 'in-progress'){
+          return todos.value.filter(todo => !todo.isCompleted)
+        }
+        return todos.value
+    })
+
+    const addTodo = function(){
+      const data = {
+        id:id++,
+        text:newTodo.value,
+        isCompleted:false
+      }
+      todos.value.push(data)
+      newTodo.value = ''
+    }
+
+    // 특정 요소 어떻게 삭제하지???
+    const deleteTodo = function(seletedTodo){
+      // 원본 todos가 가진 목록중, 지금 선택된 todo빼고 다시 배열 재구성
+      todos.value = todos.value.filter(function (todo){
+        return todo !== seletedTodo
+      })
+    }
+
+    return{newTodo,todos,addTodo,deleteTodo,filterdTodos,isSelected}
+  }
+})
+app.mount('#app')
+</script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>글꼴 테스트기</title>
+  <style>
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      background-color: #f5f5f5;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    input {
+      width: calc(100% - 12px);
+      margin-bottom: 5px;
+      padding: 5px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <h1>글꼴 테스트기</h1>
+    <ul>
+      <li v-for="font in fonts" :key="font.style">
+        <label>{{ font.style }}</label>
+        <!-- 뷰에서 v-model은 양방향 바인딩을 가능하게 해주는 디렉티브임
+         화면의 값이 바뀌면 변수값도 바뀌고 변수값이 바뀌면 화면값도 바뀌게 하는거임 -->
+        <input type="text" v-model="font.text">
+        <div v-if="font.text" :style="{ fontFamily: font.style }">
+          {{ font.text }}
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script>
+    const { createApp, ref } = Vue
+
+    const app = createApp({
+      setup() {
+        const fonts = ref([
+          { style: '바탕', text: '' },
+          { style: '휴먼엽서체', text: '' },
+          { style: '궁서체', text: '' },
+        ])
+
+        return {
+          fonts
+        }
+      }
+    })
+
+    app.mount('#app')
+  </script>
+</body>
+</html>

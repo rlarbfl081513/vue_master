@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <style>
+    li {
+      padding: 10px;
+      border: 1px solid #ccc;
+      margin: 10px 0;
+      background-color: #f5f5f5;
+    }
+    .cheap {
+      background-color: #e1f7e1;
+    }
+    .expensive {
+      background-color: #f7e1e1;
+    }
+    .selected {
+      background-color: #ffc;
+    }
+  </style>
+
+</head>
+<body>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <div id="app">
+    <h1>다양한 전시 정보</h1>
+
+    <div>
+      <h1>관람예정인 전시 : {{selectedInfos.length > 0 ? selectedInfos.join(',') : '관람예정 전시가 없습니다.' }}</h1>
+      <p>예상 총 금액 :  {{totalPrice}} </p>
+    </div>
+    <h3 v-show="selectedInfos.length === 0">관람 예정인 전시가 없습니다</h3>
+
+    <input type="checkbox" v-model="isActive">전시중인 정보보기
+    <ul>
+      <li 
+        v-for="info in (isActive ? isActiveexhibition : infos)"
+        :class="{'cheap':info.price <= 5000, 'expensive':info.price > 20000}"
+      >
+
+      <div v-if="info.isActive ==='전시중'">
+        전시관람하기
+        <input type="checkbox" v-model="info.isSelected">
+      </div>
+      <div style="color: red;" v-else>
+        전시가 종료되어 관람할 수 없습니다.
+      </div>
+      
+        <h3>{{info.title}} </h3>
+        <hr>
+        <p>{{info.museum}}</p>
+        <p>가격 : {{info.price}}</p>
+        <p v-show="info.price === 0">무료전시입니다.</p>
+        <hr>
+      </li>
+    </ul>
+  </div>
+
+  <script>
+    const {createApp, ref, computed, watch} = Vue
+
+    const app = createApp({
+      setup(){
+        const isActive = ref(false)
+        const infos = ref([
+          {
+            title: '무라카미 다카시 : 무라카시좀비',
+            museum: '부산 시립 미술관',
+            price: 1000,
+            isActive : '전시 종료',
+            isSelected:false
+          },
+          {
+            title: '마우라치오 카텔란 개인전',
+            museum: '리움 미술관',
+            price: 30000,
+            isActive : '전시중',
+            isSelected:false
+          },
+          {
+            title: '조선백자전',
+            museum: '리움 미술관',
+            price: 30000,
+            isActive : '전시중',
+            isSelected:false
+          },
+          {
+            title: '한국 실험미술 1960 - 1970',
+            museum: '국립현대미술관',
+            price: 0,
+            isActive : '전시중',
+            isSelected:false
+          },
+          {
+            title: '에드워드 호퍼 : 길 위에서',
+            museum: '서울 시립 미술관',
+            price: 1000,
+            isActive : '전시 종료',
+            isSelected:false
+          },
+          {
+            title: '알렉산더 칼더 x 이우환',
+            museum: '국제갤러리 서울점',
+            price: 15000,
+            isActive : '전시 종료',
+            isSelected:false
+          }
+        ])
+        
+        const selectedInfos = ref([])
+        const totalPrice = ref(0)
+
+        const isActiveexhibition = computed(() => {
+          return infos.value.filter(info => info.isActive === '전시중')
+        })
+
+        const filterInfos = computed(()=>{
+          return infos.value.filter(info => info.isSelected)
+        })
+        watch(filterInfos, (newInfo) => {
+          totalPrice.value = newInfo.reduce((acc,cur)=> acc+cur.price,0)
+          selectedInfos.value = newInfo.map(info => info.title)
+        })
+
+        return{infos, isActiveexhibition, isActive, selectedInfos, totalPrice, filterInfos}
+      }
+    })
+    app.mount('#app')
+
+  </script>
+</body>
+</html>

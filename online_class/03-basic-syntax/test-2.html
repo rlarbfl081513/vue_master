@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    <button @click="reverse">순서 뒤집기</button>
+    <div v-for="(person, index) in people" :key="key">
+      <input v-model="person.name" />
+    </div>
+  </div>
+  
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script>
+    const { createApp, ref } = Vue
+  
+    createApp({
+      setup() {
+        const people = ref([
+          { name: 'Alice' },
+          { name: 'Bob' },
+          { name: 'Charlie' }
+        ])
+  
+        const reverse = () => {
+          people.value.reverse()
+        }
+  
+        return { people, reverse }
+      }
+    }).mount('#app')
+  </script>
+  
+</body>
+</html>
